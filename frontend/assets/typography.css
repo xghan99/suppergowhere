@@ -1,0 +1,30 @@
+.title {
+    text-align:center
+}
+
+.subtitle {
+    text-align:center
+}
+
+.instructions {
+    text-align:center;
+    font-style: italic;
+}
+#day {
+    flex: 2
+}
+#time {
+    flex:2
+}
+#submit {
+    flex:1
+}
+#user_input {
+    display:flex;
+    margin:0 auto;
+    width: 500px;
+}
+
+#output {
+    text-align:center
+}

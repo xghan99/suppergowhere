@@ -1,0 +1,10 @@
+/__pycache__
+/etc
+/Include
+/Lib
+/Scripts
+/share
+*.json
+*.yaml
+*.prefectignore
+*.cfg
