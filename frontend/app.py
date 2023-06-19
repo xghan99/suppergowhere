@@ -9,7 +9,7 @@ app = dash.Dash(__name__)
 server = app.server
 """
 credentials = service_account.Credentials.from_service_account_file(
-    '../suppergowhere-658e4c3c35a8.json') #Private service account credentials
+    SERVICE_ACCOUNT_CREDENTIALS) #Private service account credentials: left blank as it is not required for deployment on Google Cloud App Engine
 """
 project_id = 'suppergowhere'
 client = bigquery.Client(project = project_id)
