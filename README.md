@@ -11,7 +11,31 @@ All you need to do is input the time and day you are planning to head back home 
 ## Website
 https://suppergowhere-mvcs7gakxq-as.a.run.app/
 
-## Technical Details
+## Deployment Instructions
+### Prefect Flow
+Prerequisites: Created a project and a BigQuery table in Google Cloud. Downloaded Service Account Credentials as a JSON file.
+1. Create an account on Prefect Cloud and log in
+2. Create a workspace on Prefect Cloud
+3. Inside the workspace, go to 'Blocks' > '+' > 'GCP Credentials' > Paste your Service Account Credentials inside and click 'Create' (This step may not be necessary given the way Application Default Credentials work in GCP)
+4. Go to your Prefect Cloud Profile > 'Settings' > 'API Keys' > '+' to generate a Prefect Cloud API Key
+5. On GCP, create a Cloud VM instance
+6. Copy the `flow_script.py` and `requirements.txt` files into the VM instance
+7. Run the following commands
+```
+sudo apt-get update
+sudo apt-get install python3.10
+pip install -r requirements.txt
+```
+8. Log onto Prefect Cloud in your VM instance (follow the instructions on screen):
+```
+prefect cloud login
+```
+9. Run the following code to build your Prefect Deployment:
+```
+prefect deployment build -n <DEPLOYMENT NAME> -p default-agent-pool -q default flow_script.py:main_flow
+```
+
+### Dash App
 
 
 ## Acknowledgements
