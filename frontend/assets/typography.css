@@ -1,24 +1,65 @@
-.title {
-    text-align:center
+/* Moving gradient background */
+body {
+	background: linear-gradient(-45deg, #e57350, #e64482, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+	height: 100vh;
+    font-size: 16px;
+    line-height: 1.5;
+    font-family: sans-serif;  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;  
 }
 
-.subtitle {
-    text-align:center
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.container {
+    padding: 50px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+}
+
+h1 {
+    text-align:center;
+    font-size: 2em;
+    padding: 10px;
 }
 
 .instructions {
     text-align:center;
     font-style: italic;
+    padding: 10px;
 }
+
+.dash-dropdown {
+    padding: 5px;
+}
+
 #day {
-    flex: 2
+    flex:2
 }
+
 #time {
     flex:2
 }
+
 #submit {
-    flex:1
+    flex:1;
+    margin: 5px;
 }
+
 #user_input {
     display:flex;
     margin:0 auto;
