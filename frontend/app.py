@@ -4,16 +4,15 @@ from dash import html, Input, Output, State, callback
 import plotly.graph_objects as go
 from google.cloud import bigquery
 from google.oauth2 import service_account
-
 app = dash.Dash(__name__)
 server = app.server
-"""
-credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_CREDENTIALS) #Private service account credentials: left blank as it is not required for deployment on Google Cloud App Engine
-"""
+
+#credentials = service_account.Credentials.from_service_account_file('')
+#Private service account credentials: left blank as it is not required for deployment on Google Cloud App Engine due to ADC
+
 project_id = 'suppergowhere'
 client = bigquery.Client(project=project_id)
-# client = bigquery.Client(project = project_id, credentials = credentials)
+#client = bigquery.Client(project = project_id, credentials = credentials)
 day_mapping = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2,
                'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
 
@@ -37,33 +36,22 @@ app.layout = html.Div(children=[
             html.Button('Go',
                         n_clicks=0,
                         id='submit'),
-            dcc.Loading(id="loading-2",
-                        children=[html.Div(id="loading-output-2")],
-                        type="circle"),
+            
         ],
         id='user_input'
     ),
     html.Br(),
-    html.Div(id='output', children=''),
+    dcc.Loading(children = html.Div(id='output'),type = "circle"),
 ],
     className='container'
 )
 
-
 @app.callback(
-    Output('output', 'children'),
+    Output('output','children'),
     Input('submit', 'n_clicks'),
     State('day', 'value'),
     State('time', 'value'),
 )
-@callback(Output("loading-output-2", "children"), Input("submit", "n_clicks"))
-def submit_triggers_spinner(n_clicks):
-    if n_clicks > 0:
-        return "Loading..."
-    else:
-        return ""
-
-
 def update_output(n_clicks, day_value, time_value):
     global day_mapping
     global client
@@ -82,16 +70,7 @@ def update_output(n_clicks, day_value, time_value):
             html.Div("The top 5 MRT stations to have supper nearby are: ")]
         for i in result['station_name']:
             child_components.append(html.Div(f"{i}"))
-
         return html.Div(children=child_components)
-
-
-def show_loading_spinner(n_clicks):
-    if n_clicks > 0:
-        return {'display': 'block'}
-    else:
-        return {'display': 'none'}
-
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port=8080, debug=True)
