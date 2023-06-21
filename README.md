@@ -18,7 +18,7 @@ Prerequisites: Created a project and a BigQuery table in Google Cloud. Downloade
 2. Create a workspace on Prefect Cloud
 3. Inside the workspace, go to 'Blocks' > '+' > 'GCP Credentials' > Paste your Service Account Credentials inside and click 'Create' (This step may not be necessary given the way Application Default Credentials work in GCP)
 4. Go to your Prefect Cloud Profile > 'Settings' > 'API Keys' > '+' to generate a Prefect Cloud API Key
-5. On GCP, create a Cloud VM instance
+5. On GCP, create a Cloud VM instance and SSH into it
 6. Copy the `flow_script.py` and `requirements.txt` files into the VM instance
 7. Run the following commands
 ```
@@ -34,6 +34,13 @@ prefect cloud login
 ```
 prefect deployment build -n <DEPLOYMENT NAME> -p default-agent-pool -q default flow_script.py:main_flow
 ```
+10. Run the following code to apply the Deployment
+```
+prefect deployment apply <DEPLOYMENT NAME>-deployment.yaml
+```
+11. Go to your Prefect Cloud Dashboard on your main computer and set the schedule for the deployment. You can press 'Quick Run' to test out the flow
+12. Run ```nohup prefect agent start --pool default-agent-pool >/dev/null 2>&1``` in your VM instance. This starts the prefect agent which would run the flow code according to the schedule. `nohup` keeps the process running even after you close the SSH instance. `>/dev/null 2>&1` would ensure that the process would not generate `nohup.out` logs
+
 
 ### Dash App
 
