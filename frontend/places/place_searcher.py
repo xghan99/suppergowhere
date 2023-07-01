@@ -112,7 +112,7 @@ class PlaceSearcher:
 
         location = self.mrt_coord_dict[place]
 
-        url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?type={keyword}&location={location[0]}%2C{location[1]}&radius={radius}&key={API_KEY}"
+        url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?type={keyword}&location={location[0]}%2C{location[1]}&radius={radius}&key={self.API_KEY}"
         headers = {}
         payload = {}
         try:

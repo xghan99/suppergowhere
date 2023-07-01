@@ -66,7 +66,6 @@ app.layout = html.Div(children=[
 )
 def update_output(n_clicks, day_value, time_value):
     global day_mapping
-    global client
     if n_clicks > 0:
         day = day_mapping[day_value]
         time = int(time_value[1])

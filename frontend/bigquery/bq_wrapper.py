@@ -2,9 +2,7 @@ from typing import Any
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-local_testing = True
-if local_testing:
-    gcp_credentials = service_account.Credentials.from_service_account_file("")
+credentials_file_path = "/Users/ivankoh/Downloads/credentials (1).json"
 
 class BQWrapper:
     def __init__(self, project_id: str, local_testing: bool):
@@ -19,6 +17,8 @@ class BQWrapper:
     """
     def _get_client(self, local_testing: bool) -> bigquery.Client:
         if local_testing:
+            # TODO: refactor
+            gcp_credentials = service_account.Credentials.from_service_account_file(credentials_file_path, project=self.project_id)
             return bigquery.Client(project=self.project_id, credentials=gcp_credentials)
         else:
             return bigquery.Client(project=self.project_id)
