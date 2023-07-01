@@ -95,6 +95,7 @@ def suggest_place(place, day, time):
     is_open = map(lambda x:is_place_open(API_KEY,x,day,time),list(place_ids))
     dict_return = {'names':list(names), 'ratings':list(ratings),'is_open' :list(is_open)}
     df_return = pd.DataFrame(dict_return)
+    print(df_return.columns)
     df_return = df_return[df_return['is_open']][['names','ratings']]
        
     return dash_table.DataTable(df_return.to_dict("records"))
