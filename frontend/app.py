@@ -82,7 +82,7 @@ def suggest_place(place, day, time):
     if local_testing:
         API_KEY = ""
     else:
-        API_KEY = os.environ.get('MAPS_API_KEY')
+        API_KEY = os.environ.get('maps_api_key')
     url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?type={keyword}&location={location[0]}%2C{location[1]}&radius={radius}&key={API_KEY}"
     headers = {}
     payload = {}
@@ -95,7 +95,6 @@ def suggest_place(place, day, time):
     is_open = map(lambda x:is_place_open(API_KEY,x,day,time),list(place_ids))
     dict_return = {'names':list(names), 'ratings':list(ratings),'is_open' :list(is_open)}
     df_return = pd.DataFrame(dict_return)
-    print(df_return.columns)
     df_return = df_return[df_return['is_open']][['names','ratings']]
        
     return dash_table.DataTable(df_return.to_dict("records"))
