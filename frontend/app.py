@@ -4,8 +4,6 @@ from bigquery.bq_wrapper import BQWrapper
 import os
 import json
 from dash import Dash, html, Input, Output, State, ctx, dcc
-import plotly.graph_objects as go
-import dash_bootstrap_components as dbc
 
 local_testing = os.environ.get('local_testing')=="True"
 
@@ -24,9 +22,13 @@ with open("./data/mapping.json", "r") as f:
 mrt = MRT("./data/mrt_lrt_data.csv")
 mrt_coord_dict = mrt.get_mrt_coord_dict(mrt.data)
 
-# init place searcher and BQ wrapper
-place_searcher = PlaceSearcher(local_testing=local_testing, mrt_coord_dict=mrt_coord_dict)
-bq = BQWrapper(project_id=project_id, local_testing=local_testing)
+
+# init PlaceSearcher and BigQuery Wrapper classes
+place_searcher = PlaceSearcher(
+    local_testing=local_testing, mrt_coord_dict=mrt_coord_dict)
+
+bq = BQWrapper(local_testing=local_testing, project_id=project_id)
+
 
 app.layout = html.Div(children=[
     html.H1(children='SupperGoWhere', className='title'),
@@ -37,11 +39,11 @@ app.layout = html.Div(children=[
              className='instructions'),
     html.Div(
         children=[
-            dcc.Dropdown(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            dcc.Dropdown([day for day in day_mapping.keys()],
                          placeholder='Select the Day',
                          id='day',
                          clearable=False),
-            dcc.Dropdown(['00:00', '01:00', '02:00', '03:00', '04:00', '05:00'],
+            dcc.Dropdown([f'0{str(h)}:00' for h in range(0, 6)],
                          id='time',
                          placeholder='Select the Time',
                          clearable=False),

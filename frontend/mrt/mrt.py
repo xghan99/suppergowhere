@@ -12,7 +12,7 @@ class MRTLoader:
 
     :return: :class:`pandas.DataFrame`
     """
-    
+
     @staticmethod
     def _load_data(data_path: str) -> pd.DataFrame:
         return pd.read_csv(data_path)

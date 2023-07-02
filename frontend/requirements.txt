@@ -1,0 +1,5 @@
+google-auth-oauthlib
+google-cloud-bigquery
+dash
+pandas
+requests

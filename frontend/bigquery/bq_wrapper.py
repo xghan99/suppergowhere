@@ -6,7 +6,7 @@ import os
 
 
 class BQWrapper:
-    def __init__(self, project_id: str, local_testing: bool):
+    def __init__(self, local_testing: bool, project_id: str):
         self.project_id = project_id
         self.client = self._get_client(local_testing)
     
@@ -18,6 +18,7 @@ class BQWrapper:
     """
     def _get_client(self, local_testing: bool) -> bigquery.Client:
         if local_testing:
+
             # TODO: refactor
             credentials_file_path = os.environ.get("credentials_file_path")
             gcp_credentials = service_account.Credentials.from_service_account_file(credentials_file_path, project=self.project_id)

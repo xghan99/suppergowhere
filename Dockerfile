@@ -2,8 +2,9 @@ FROM python:3.9-slim-buster
 
 ENV APP_HOME /app
 ENV PYTHONBUFFERED True
+ENV PORT 8080
 WORKDIR $APP_HOME 
-ADD requirements.txt .
+ADD ./frontend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt && pip install --no-cache-dir gunicorn
 RUN groupadd -r app && useradd -r -g app app
 COPY ./data ./data
