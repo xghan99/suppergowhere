@@ -8,7 +8,8 @@ class PlaceSearcher:
     def __init__(self, local_testing: bool, mrt_coord_dict: dict):
         self.mrt_coord_dict = mrt_coord_dict
         if local_testing:
-            self.API_KEY = os.environ.get('maps_api_key')
+            # TODO: if prod then ?
+            self.API_KEY = ""
         else:
             self.API_KEY = os.environ.get('maps_api_key')
 
