@@ -1,6 +1,7 @@
 from typing import Any
 from google.cloud import bigquery
 from google.oauth2 import service_account
+import os
 
 credentials_file_path = os.environ.get("credentials_file_path")
 
