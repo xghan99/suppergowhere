@@ -10,6 +10,8 @@ import dash_bootstrap_components as dbc
 local_testing = False
 
 app = Dash(__name__, suppress_callback_exceptions=True)
+if not local_testing:
+    server = app.server
 project_id = 'suppergowhere'
 
 # Load the day mapping
