@@ -7,7 +7,7 @@ from dash import Dash, html, Input, Output, State, ctx, dcc
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 
-local_testing = os.environ.get('local_testing')
+local_testing = os.environ.get('local_testing')=="True"
 
 app = Dash(__name__, suppress_callback_exceptions=True)
 
