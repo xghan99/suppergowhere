@@ -45,6 +45,10 @@ prefect deployment apply <DEPLOYMENT NAME>-deployment.yaml
 ### Dash App
 
 
+## References
+Live Taxi Location Data: https://beta.data.gov.sg/datasets/352/view
+MRT Coordinates: https://www.kaggle.com/datasets/yxlee245/singapore-train-station-coordinates
+
 ## Acknowledgements
-Live Taxi Location Data:
-MRT Coordinates: 
+Ivan (https://github.com/ivankqw) for helping out with the front-end design and code organisation.
+
