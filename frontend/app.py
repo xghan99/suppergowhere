@@ -7,11 +7,13 @@ from dash import Dash, html, Input, Output, State, ctx, dcc
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 
-local_testing = False
+local_testing = os.environ.get('local_testing')
 
 app = Dash(__name__, suppress_callback_exceptions=True)
+
 if not local_testing:
     server = app.server
+    
 project_id = 'suppergowhere'
 
 # Load the day mapping
@@ -23,7 +25,7 @@ mrt = MRT("./data/mrt_lrt_data.csv")
 mrt_coord_dict = mrt.get_mrt_coord_dict(mrt.data)
 
 # init place searcher and BQ wrapper
-place_searcher = PlaceSearcher(local_testing=True, mrt_coord_dict=mrt_coord_dict)
+place_searcher = PlaceSearcher(local_testing=local_testing, mrt_coord_dict=mrt_coord_dict)
 bq = BQWrapper(project_id=project_id, local_testing=local_testing)
 
 app.layout = html.Div(children=[

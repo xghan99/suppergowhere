@@ -2,7 +2,7 @@ from typing import Any
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
-credentials_file_path = ""
+credentials_file_path = os.environ.get("credentials_file_path")
 
 class BQWrapper:
     def __init__(self, project_id: str, local_testing: bool):
