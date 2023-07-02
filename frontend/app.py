@@ -1,15 +1,17 @@
 from mrt.mrt import MRTLoader as MRT
 from places.place_searcher import PlaceSearcher
 from bigquery.bq_wrapper import BQWrapper
-
+import os
 import json
 from dash import Dash, html, Input, Output, State, ctx, dcc
 
-local_testing = False
+local_testing = os.environ.get('local_testing')=="True"
 
 app = Dash(__name__, suppress_callback_exceptions=True)
+
 if not local_testing:
     server = app.server
+    
 project_id = 'suppergowhere'
 
 # Load the day mapping
@@ -20,11 +22,13 @@ with open("./data/mapping.json", "r") as f:
 mrt = MRT("./data/mrt_lrt_data.csv")
 mrt_coord_dict = mrt.get_mrt_coord_dict(mrt.data)
 
+
 # init PlaceSearcher and BigQuery Wrapper classes
 place_searcher = PlaceSearcher(
     local_testing=local_testing, mrt_coord_dict=mrt_coord_dict)
 
 bq = BQWrapper(local_testing=local_testing, project_id=project_id)
+
 
 app.layout = html.Div(children=[
     html.H1(children='SupperGoWhere', className='title'),

@@ -7,11 +7,7 @@ import pandas as pd
 class PlaceSearcher:
     def __init__(self, local_testing: bool, mrt_coord_dict: dict):
         self.mrt_coord_dict = mrt_coord_dict
-        if local_testing:
-            # TODO: if prod then ?
-            self.API_KEY = ""
-        else:
-            self.API_KEY = os.environ.get('maps_api_key')
+        self.API_KEY = os.environ.get('maps_api_key')
 
     """Checks if a place is open at a given day and time
 
