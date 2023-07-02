@@ -49,7 +49,7 @@ def load_to_bq(df):
 @flow
 def main_flow():
     #Reading MRT Data
-    mrt_data = pd.read_csv("data/mrt_lrt_data.csv")
+    mrt_data = pd.read_csv("frontend/data/mrt_lrt_data.csv")
     mrt_data = mrt_data[mrt_data['type'] == 'MRT']
     mrt_data['combined'] = mrt_data[['lat','lng']].values.tolist()
     #Getting Arguments
