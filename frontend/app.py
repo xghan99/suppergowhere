@@ -13,11 +13,11 @@ app = Dash(__name__, suppress_callback_exceptions=True)
 project_id = 'suppergowhere'
 
 # Load the day mapping
-with open("../data/mapping.json", "r") as f:
+with open("./data/mapping.json", "r") as f:
     day_mapping = json.load(f)
 
 # Load the MRT data
-mrt = MRT("../data/mrt_lrt_data.csv")
+mrt = MRT("./data/mrt_lrt_data.csv")
 mrt_coord_dict = mrt.get_mrt_coord_dict(mrt.data)
 
 # init place searcher and BQ wrapper

@@ -9,7 +9,7 @@ class PlaceSearcher:
         self.mrt_coord_dict = mrt_coord_dict
         if local_testing:
             # TODO: if prod then ?
-            self.API_KEY = os.environ.get('maps_api_key')
+            self.API_KEY = ""
         else:
             self.API_KEY = os.environ.get('maps_api_key')
 
