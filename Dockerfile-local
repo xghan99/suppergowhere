@@ -1,0 +1,20 @@
+FROM python:3.9-slim-buster
+
+ENV APP_HOME /app
+ARG credentials_file_path
+WORKDIR $APP_HOME 
+ADD ./frontend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY ./data ./data
+COPY ./frontend ./
+COPY $credentials_file_path $credentials_file_path
+ENV local_testing=True
+ENV credentials_file_path=$credentials_file_path
+ENV maps_api_key=""
+CMD ["python","app.py"]
+
+
+#How to use
+#docker build -t <image-name> -f ./Dockerfile-local --build-arg credentials_file_path=<credentials file> .
+#docker run --env maps_api_key=<maps-api-key> -p 8080:8080 <image-name>
+#Go to http://localhost:8080/

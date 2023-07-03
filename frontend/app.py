@@ -127,7 +127,5 @@ def suggest_all_places(p0, p1, p2, p3, p4, v0, v1, v2, v3, v4, day, time):
 
 
 if __name__ == '__main__':
-    if not local_testing:
-        app.run_server(host='0.0.0.0', port=8080, debug=True)
-    else:
-        app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port=8080, debug=True)
+    

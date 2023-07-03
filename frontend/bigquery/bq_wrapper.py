@@ -21,7 +21,7 @@ class BQWrapper:
 
             # TODO: refactor
             credentials_file_path = os.environ.get("credentials_file_path")
-            gcp_credentials = service_account.Credentials.from_service_account_file(credentials_file_path, project=self.project_id)
+            gcp_credentials = service_account.Credentials.from_service_account_file(credentials_file_path)
             return bigquery.Client(project=self.project_id, credentials=gcp_credentials)
         else:
             return bigquery.Client(project=self.project_id)
