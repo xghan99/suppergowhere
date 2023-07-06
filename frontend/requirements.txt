@@ -4,3 +4,4 @@ dash
 pandas
 requests
 db-dtypes
+dash-bootstrap-components

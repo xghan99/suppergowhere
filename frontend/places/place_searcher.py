@@ -1,8 +1,9 @@
 import os
 import requests
 from datetime import time
-from dash import dash_table
+from dash import html
 import pandas as pd
+import dash_bootstrap_components as dbc
 
 class PlaceSearcher:
     def __init__(self, local_testing: bool, mrt_coord_dict: dict):
@@ -153,12 +154,14 @@ class PlaceSearcher:
                           time),
                       list(place_ids)
                       )
-        dict_return = {
-            'names': list(names),
-            'ratings': list(ratings),
-            'is_open': list(is_open)
-        }
-        df_return = pd.DataFrame(dict_return)
-        df_return = df_return[df_return['is_open']][['names', 'ratings']]
-
-        return dash_table.DataTable(df_return.to_dict("records"))
+        cards = []
+        is_open = list(is_open)
+        for i in range(len(is_open)):
+            if is_open[i]:
+                cards.append(dbc.Card([dbc.CardBody([html.H4(f'{names[i]}'),html.P(f"Rating: {ratings[i]}/5")])],class_name = "card"))
+                cards.append(html.Br())
+            
+        if cards:
+            return cards
+        else:
+            return "Nothing to suggest!"
