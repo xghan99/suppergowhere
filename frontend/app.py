@@ -25,7 +25,7 @@ mrt_coord_dict = mrt.get_mrt_coord_dict(mrt.data)
 
 # init PlaceSearcher and BigQuery Wrapper classes
 place_searcher = PlaceSearcher(
-    local_testing=local_testing, mrt_coord_dict=mrt_coord_dict)
+    local_testing=local_testing, mrt_coord_dict=mrt_coord_dict, project_id = project_id)
 
 bq = BQWrapper(local_testing=local_testing, project_id=project_id)
 
