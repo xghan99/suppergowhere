@@ -172,7 +172,7 @@ class PlaceSearcher:
             result_df['time'] = time
             result_df['place'] = place
             result_df = result_df.drop('is_open', axis = 1)
-            result_df.(reset_index(inplace = True))
+            result_df.reset_index(inplace = True)
             job = bq.client.load_table_from_dataframe(result_df,table)
             return self.generate_output(result_df)
 
