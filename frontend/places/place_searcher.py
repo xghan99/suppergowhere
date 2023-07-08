@@ -4,11 +4,14 @@ from datetime import time
 from dash import html
 import pandas as pd
 import dash_bootstrap_components as dbc
+from bigquery.bq_wrapper import BQWrapper
 
 class PlaceSearcher:
-    def __init__(self, local_testing: bool, mrt_coord_dict: dict):
+    def __init__(self, local_testing: bool, mrt_coord_dict: dict, project_id: str):
         self.mrt_coord_dict = mrt_coord_dict
         self.API_KEY = os.environ.get('maps_api_key')
+        self.project_id = project_id
+        self.local_testing = local_testing
 
     """Checks if a place is open at a given day and time
 
@@ -106,60 +109,76 @@ class PlaceSearcher:
                       time: str,
                       radius: int = 500,
                       keyword: str = "restaurant"):
-
+        
         location = self.mrt_coord_dict[place]
+        table = 'supper_locations.supper_location'
+        bq = BQWrapper(local_testing=self.local_testing, project_id=self.project_id)
+        query = f"SELECT name, rating FROM {table} WHERE day  = {day} AND time = '{time}' AND place = '{place}'"
+        query_job = bq.query(query)
+        result = pd.DataFrame(query_job.to_dataframe())
+        if result.shape[0]>0:
+            return self.generate_output(result)
+        else:
+            url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?type={keyword}&location={location[0]}%2C{location[1]}&radius={radius}&key={self.API_KEY}"
+            headers = {}
+            payload = {}
+            try:
+                response = requests.request(
+                    "GET", url, headers=headers, data=payload)
+            except requests.exceptions.Timeout:
+                retry_attempts = 5
+                for _ in range(retry_attempts):
+                    try:
+                        response = requests.request(
+                            "GET", url, headers=headers, data=payload)
+                        break
+                    except requests.exceptions.Timeout:
+                        continue
+            except requests.exceptions.TooManyRedirects:
+                # Tell the user their URL was bad and try a different one
+                print("Bad URL")
+                return False
+            except requests.exceptions.RequestException as e:
+                print("Error in request", e)
+                return False
 
-        url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?type={keyword}&location={location[0]}%2C{location[1]}&radius={radius}&key={self.API_KEY}"
-        headers = {}
-        payload = {}
-        try:
-            response = requests.request(
-                "GET", url, headers=headers, data=payload)
-        except requests.exceptions.Timeout:
-            retry_attempts = 5
-            for _ in range(retry_attempts):
-                try:
-                    response = requests.request(
-                        "GET", url, headers=headers, data=payload)
-                    break
-                except requests.exceptions.Timeout:
-                    continue
-        except requests.exceptions.TooManyRedirects:
-            # Tell the user their URL was bad and try a different one
-            print("Bad URL")
-            return False
-        except requests.exceptions.RequestException as e:
-            print("Error in request", e)
-            return False
+            if response.status_code != 200:
+                print("Error in request", response.status_code)
+                return False
 
-        if response.status_code != 200:
-            print("Error in request", response.status_code)
-            return False
+            try:
+                json_response = response.json()
+            except ValueError:
+                print("Error in request", response.status_code)
+                return False
 
-        try:
-            json_response = response.json()
-        except ValueError:
-            print("Error in request", response.status_code)
-            return False
+            names = [i['name'] for i in json_response['results']]
+            ratings = [i['rating']
+                       if 'rating' in i else 0.0 for i in json_response['results']]
+            place_ids = [i['place_id'] for i in json_response['results']]
+            is_open = map(lambda place_id:
+                          self._is_place_open(
+                              self.API_KEY,
+                              place_id,
+                              day,
+                              time),
+                          list(place_ids)
+                          )
+            result_dict = {'name':list(names),'rating':list(ratings),'is_open':list(is_open)}
+            result_df = pd.DataFrame(result_dict)
+            result_df = result_df[result_df['is_open']]
+            result_df['day'] = day
+            result_df['time'] = time
+            result_df['place'] = place
+            result_df = result_df.drop('is_open', axis = 1)
+            job = bq.client.load_table_from_dataframe(result_df,table)
+            return self.generate_output(result_df)
 
-        names = [i['name'] for i in json_response['results']]
-        ratings = [i['rating']
-                   if 'rating' in i else 0.0 for i in json_response['results']]
-        place_ids = [i['place_id'] for i in json_response['results']]
-        is_open = map(lambda place_id:
-                      self._is_place_open(
-                          self.API_KEY,
-                          place_id,
-                          day,
-                          time),
-                      list(place_ids)
-                      )
+    def generate_output(self,df):
         cards = []
-        is_open = list(is_open)
-        for i in range(len(is_open)):
-            if is_open[i]:
-                cards.append(dbc.Card([dbc.CardBody([html.H4(f'{names[i]}'),html.P(f"Rating: {ratings[i]}/5")])],class_name = "card"))
-                cards.append(html.Br())
+        for i in range(len(df)):
+            cards.append(dbc.Card([dbc.CardBody([html.H4(f"{df['name'][i]}"),html.P(f"Rating: {df['rating'][i]}/5")])],class_name = "card"))
+            cards.append(html.Br())
             
         if cards:
             return cards
