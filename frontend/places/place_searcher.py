@@ -176,8 +176,10 @@ class PlaceSearcher:
 
     def generate_output(self,df):
         cards = []
+        names = df['name']
+        ratings = df['rating']
         for i in range(len(df)):
-            cards.append(dbc.Card([dbc.CardBody([html.H4(f"{df['name'][i]}"),html.P(f"Rating: {df['rating'][i]}/5")])],class_name = "card"))
+            cards.append(dbc.Card([dbc.CardBody([html.H4(f"{names[i]}"),html.P(f"Rating: {ratings[i]}/5")])],class_name = "card"))
             cards.append(html.Br())
             
         if cards:
