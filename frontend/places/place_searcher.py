@@ -116,6 +116,7 @@ class PlaceSearcher:
         query = f"SELECT name, rating FROM {table} WHERE day  = {day} AND time = '{time}' AND place = '{place}'"
         query_job = bq.query(query)
         result = pd.DataFrame(query_job.to_dataframe())
+        result.reset_index(inplace = True)
         if result.shape[0]>0:
             return self.generate_output(result)
         else:
@@ -171,6 +172,7 @@ class PlaceSearcher:
             result_df['time'] = time
             result_df['place'] = place
             result_df = result_df.drop('is_open', axis = 1)
+            result_df.(reset_index(inplace = True))
             job = bq.client.load_table_from_dataframe(result_df,table)
             return self.generate_output(result_df)
 
