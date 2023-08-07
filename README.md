@@ -42,12 +42,43 @@ prefect deployment apply <DEPLOYMENT NAME>-deployment.yaml
 12. Run ```nohup prefect agent start --pool default-agent-pool >/dev/null 2>&1``` in your VM instance. This starts the prefect agent which would run the flow code according to the schedule. `nohup` keeps the process running even after you close the SSH instance. `>/dev/null 2>&1` would ensure that the process would not generate `nohup.out` logs
 
 
-### Dash App
+### Deploying Dash App using Google Cloud Run
+Prerequisites: 2 Bigquery Tables (one for number of taxis per MRT stations and one for caching supper recommendations), Secret Variable created on Google Cloud for your Maps API Key
+1. Ensure that you are in the main directory
+2. Run the following Docker commands to build a Docker image and push it onto Google Container Registry: 
+```
+docker build -f Dockerfile -t gcr.io/{PROJECT_ID}/{IMAGE}:{TAG} .
+docker push gcr.io/{PROJECT_ID}/{IMAGE}:{TAG}
+```
+3.Then run the following command to deploy the web app:
+```
+gcloud run deploy {name} \
+      --image=gcr.io/{PROJECT_ID}/{IMAGE}:{TAG} \
+      --platform=managed \
+      --region={your_region} \  # GCP region
+      --timeout=60 \          # Request timeout (max 900 secs)
+      --concurrency=80 \      # Max request concurrency (default 80)
+      --cpu=1 \               # Instance number of CPU's (default 1)
+      --memory=256Mi \        # Instance memory (default 256Mi)
+      --max-instances=10  \   # Max instances
+      --allow-unauthenticated \ # Make service publicly available
+      --update-secrets=maps_api_key={MAPS_API_KEY_SECRET}:{VERSION} \
+      --update-env-vars local_testing=False
+```
+
+### Deploying Locally
+1. Run the following Docker Commands to build the image and run the container
+```
+docker build -t <image-name> -f ./Dockerfile-local --build-arg credentials_file_path=<credentials file> .
+docker run --env maps_api_key=<maps-api-key> -p 8080:8080 <image-name>
+```
+2. Go to http://localhost:8080/
 
 
 ## References
-Live Taxi Location Data: https://beta.data.gov.sg/datasets/352/view
-MRT Coordinates: https://www.kaggle.com/datasets/yxlee245/singapore-train-station-coordinates
+<li> Live Taxi Location Data: https://beta.data.gov.sg/datasets/352/view
+<li> MRT Coordinates: https://www.kaggle.com/datasets/yxlee245/singapore-train-station-coordinates
+<li> Deploying Dash App on Google Cloud Run: https://medium.com/kunder/deploying-dash-to-cloud-run-5-minutes-c026eeea46d4
 
 ## Acknowledgements
 Ivan (https://github.com/ivankqw) for helping out with the front-end design and code organisation.
