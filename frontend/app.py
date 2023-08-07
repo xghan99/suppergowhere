@@ -7,7 +7,7 @@ from dash import Dash, html, Input, Output, State, ctx, dcc
 
 local_testing = os.environ.get('local_testing')=="True"
 
-app = Dash(__name__, suppress_callback_exceptions=True)
+app = Dash(__name__, suppress_callback_exceptions=True, meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}])
 
 if not local_testing:
     server = app.server
