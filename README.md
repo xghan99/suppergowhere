@@ -19,13 +19,15 @@ Prerequisites: Created a project and a BigQuery table in Google Cloud. Downloade
 3. Inside the workspace, go to 'Blocks' > '+' > 'GCP Credentials' > Paste your Service Account Credentials inside and click 'Create' (This step may not be necessary given the way Application Default Credentials work in GCP)
 4. Go to your Prefect Cloud Profile > 'Settings' > 'API Keys' > '+' to generate a Prefect Cloud API Key
 5. On GCP, create a Cloud VM instance and SSH into it
-6. Copy the `flow_script.py` and `requirements.txt` files into the VM instance
+6. Copy the `flow_script.py`, `requirements.txt` and `mrt_lrt_data.csv` files into the VM instance
 7. Run the following commands
 ```
 sudo apt-get update
 sudo apt-get install python3.10
+sudo apt-get install python3-pip
 pip install -r requirements.txt
 ```
+7a. Change your PATH variable as required
 8. Log onto Prefect Cloud in your VM instance (follow the instructions on screen):
 ```
 prefect cloud login
