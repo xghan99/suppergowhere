@@ -60,6 +60,7 @@ class PlaceSearcher:
         except ValueError:
             print("Error in request", response.status_code)
             return False
+        #Google Maps follows a different convention for dates where 'Sunday' = 0 and not 'Monday'
         day = (day+1) % 7
 
         result = data["result"]
@@ -68,7 +69,6 @@ class PlaceSearcher:
         if "opening_hours" in result and "periods" in result["opening_hours"]:
             opening_hours = result["opening_hours"]
 
-            # TODO: too many nested if statements, refactor
             for period in opening_hours["periods"]:
                 if period["open"]["day"] == day:
                     open_time = time(int(period["open"]["time"][:2]), 0)
@@ -87,7 +87,7 @@ class PlaceSearcher:
                             continue
             return False
 
-        # assume the place is open 24/7
+        # assume the place is open 24/7 if result unavailable
         else:
             print("Opening hours or periods not available, defaulting to 24/7")
             return True
@@ -113,12 +113,15 @@ class PlaceSearcher:
         location = self.mrt_coord_dict[place]
         table = 'supper_locations.supper_location'
         bq = BQWrapper(local_testing=self.local_testing, project_id=self.project_id)
+        #Attempt to get cached supper spots and their ratings from BigQuery
         query = f"SELECT name, rating FROM {table} WHERE day  = {day} AND time = '{time}' AND place = '{place}'"
         query_job = bq.query(query)
         result = pd.DataFrame(query_job.to_dataframe())
         result.reset_index(inplace = True, drop = True)
+        #Cached results exists                  
         if result.shape[0]>0:
             return self.generate_output(result)
+        #Cache does not exist: call Maps API to get supper locations and cache the results
         else:
             url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json?type={keyword}&location={location[0]}%2C{location[1]}&radius={radius}&key={self.API_KEY}"
             headers = {}
@@ -167,12 +170,14 @@ class PlaceSearcher:
                           )
             result_dict = {'name':list(names),'rating':list(ratings),'is_open':list(is_open)}
             result_df = pd.DataFrame(result_dict)
+            #Only keeps results for restaurants that are open at the specified time
             result_df = result_df[result_df['is_open']]
             result_df['day'] = day
             result_df['time'] = time
             result_df['place'] = place
             result_df = result_df.drop('is_open', axis = 1)
             result_df.reset_index(inplace = True, drop = True)
+            #Cache results
             job = bq.client.load_table_from_dataframe(result_df,table)
             return self.generate_output(result_df)
 
