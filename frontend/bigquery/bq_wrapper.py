@@ -18,12 +18,12 @@ class BQWrapper:
     """
     def _get_client(self, local_testing: bool) -> bigquery.Client:
         if local_testing:
-
-            # TODO: refactor
+            # Get credentials from the specified file path
             credentials_file_path = os.environ.get("credentials_file_path")
             gcp_credentials = service_account.Credentials.from_service_account_file(credentials_file_path)
             return bigquery.Client(project=self.project_id, credentials=gcp_credentials)
         else:
+            # Uses Google's Application Default Credentials - no need to provide credentials file
             return bigquery.Client(project=self.project_id)
     
     """Query BigQuery
